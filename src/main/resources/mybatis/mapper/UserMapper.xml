@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.SecurityDemo.mapper.UserMapper">
+
+    <resultMap id="Users" type="com.example.SecurityDemo.pojo.MyUser">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <collection property="roleList" ofType="com.example.SecurityDemo.pojo.Role">
+            <id column="role_id" property="roleId"></id>
+            <result column="role_name" property="role"></result>
+        </collection>
+    </resultMap>
+
+    <resultMap id="functions" type="com.example.SecurityDemo.pojo.Function">
+        <result column="role_name" property="roleName"></result>
+        <result column="function_id" property="functionId"></result>
+    </resultMap>
+
+    <select id="getUserByUsername" resultMap="Users">
+        select
+          u.id,
+          u.username,
+          u.password,
+          ur.role_id,
+          r.role_name
+        from user u,user_to_roles ur,role r
+        where u.id = ur.user_id
+        and ur.role_id = r.id
+        and u.username = #{username}
+    </select>
+
+    <select id="getFunctionsByRoleName" resultMap="functions">
+        select
+          r.role_name,
+          rf.function_id
+        from role r,role_to_functions rf
+        where r.role_name = #{roleName}
+        and r.id = rf.role_id
+    </select>
+
+</mapper>
